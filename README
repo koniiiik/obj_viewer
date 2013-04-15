@@ -1,0 +1,18 @@
+As a student of an introductory computer graphics course, my task was
+to create a small application capable of the following:
+
+- loading OBJ files, only examining vertices and faces
+- rendering the model in orthogonal projection
+- applying simple (global) transformations to the model using matrices:
+    - rotating by 5 degrees around any (world) axis
+    - moving by +0.1 in any of the three directions
+    - scaling up/down to 110%/90% of the original size
+- applying flat shading to the model
+
+I've decided to use a tool way too powerful for such simple task -- the
+Python/Qt (PySide) combo. Not allowed to use much of the functionality
+provided by it (the goal of the assignment is to learn how these things
+can be done on your own), I'm reinventing the wheel by only using the most
+basic functions like drawing a single line -- which, compared to using
+already implemented, highly optimized functions, slows the application
+down a lot.
