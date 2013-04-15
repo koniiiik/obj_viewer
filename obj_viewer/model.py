@@ -1,5 +1,8 @@
+import itertools
+
+from obj_viewer.constants import DEGREES, TRANSLATE, SCALE_UP, SCALE_DOWN
 from obj_viewer.errors import WrongFileFormatError
-from obj_viewer.matrices import Point
+from obj_viewer.matrices import Matrix, Point, Identity, Rotation
 from obj_viewer.face import Face
 
 
@@ -7,20 +10,27 @@ class Model():
     """Main class handling object creation and manipulation.
 
     Key attributes:
-    vertices -- model's vertices are recorded in this list as
-                instances of the Point class; their order is
-                significant (see below)
-    faces    -- a list containing Faces (tuples) of vertex indices
-                (starting at 0) joined by edges, e.g. [[0, 3, 5],
-                [1, 2, 6, 8]] means that there are 2 faces: one
-                is triangular (with edges between vertices indexed
-                0-3, 3-5, 5-0), the latter consists of four edges
-                connecting 1 and 2, 2 and 6, 6 and 8, 8 and 1
+    canvas      -- the scene the model is painted on
+    vertices    -- model's vertices are recorded in this list as
+                   instances of the Point class; their order is
+                   significant (see below)
+    faces       -- a list containing Faces (tuples) of vertex indices
+                   (starting at 0) joined by edges, e.g. [[0, 3, 5],
+                   [1, 2, 6, 8]] means that there are 2 faces: one
+                   is triangular (with edges between vertices indexed
+                   0-3, 3-5, 5-0), the latter consists of four edges
+                   connecting 1 and 2, 2 and 6, 6 and 8, 8 and 1
+    current_mod -- a single matrix reflecting all transformations that
+                   have been applied to the model since it was first
+                   displayed; initialized to identity at the beginning
     """
 
-    def __init__(self, filename):
+    def __init__(self, canvas, view_matrix, filename):
+        self.canvas = canvas
+        self.view_matrix = view_matrix
         self.vertices = []
         self.faces = []
+        self.current_mod = Identity()
         self.load_from_file(filename)
 
     def __str__(self):
@@ -42,7 +52,7 @@ class Model():
             sys.stderr.write('There was a problem opening the input file.')
             raise
         for line in source:
-            # Load all of the vertices:
+            # Load all the vertices:
             if line.startswith('v'):
                 try:
                     self.vertices.append(Point(*[float(coordinate) for
@@ -70,11 +80,38 @@ class Model():
         print('A total of %d vertices and %d faces has been loaded.'
               % (len(self.vertices), len(self.faces)))
 
-    def get_x(self, vertex):
-        return self.vertices[vertex].get_x()
 
-    def get_y(self, vertex):
-        return self.vertices[vertex].get_y()
+    # All transformation methods follow -- they'd be unnecessary if
+    # Qt signal slots were able to use functions with extra
+    # arguments...
+    # TODO: Look into this...
 
-    def get_z(self, vertex):
-        return self.vertices[vertex].get_z()
+    def rotate_x(self):
+        self.transform(Rotation('x', degrees = DEGREES))
+
+    def rotate_y(self):
+        self.transform(Rotation('y', degrees = DEGREES))
+
+    def rotate_z(self):
+        self.transform(Rotation('z', degrees = DEGREES))
+
+    def transform(self, transformation):
+        self.current_mod = self.current_mod.multiplied(transformation)
+        self.render()
+
+    def reset(self):
+        self.current_mod = Identity()
+        self.render()
+
+    def render(self):
+        self.canvas.clear()
+        for face in self.faces:
+            circle = itertools.cycle(face)
+            v = next(circle)
+            for i in range(len(face)):
+                x1, y1, z1 = self.vertices[v].get_view_coordinates(self.current_mod,
+                                                                   self.view_matrix)
+                v = next(circle)
+                x2, y2, z2 = self.vertices[v].get_view_coordinates(self.current_mod,
+                                                                   self.view_matrix)
+                self.canvas.addLine(x1, y1, x2, y2)

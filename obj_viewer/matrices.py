@@ -52,8 +52,14 @@ class Point(Matrix):
     def __init__(self, x, y, z):
         Matrix.__init__(self, [[x, y, z, 1]])
 
-    def get_viewport_coordinates(self, view_matrix):
-        new_coordinates = self.multiplied(view_matrix)
+    def get_view_coordinates(self, transformation_matrix,
+                             view_matrix):
+        """Calculate the location of the point in the viewport,
+        taking into account any transformation that has been applied
+        to the model (stored in transformation_matrix).
+        """
+        new_coordinates =\
+            self.multiplied(transformation_matrix).multiplied(view_matrix)
         return (new_coordinates[0][0], new_coordinates[0][1],
                 new_coordinates[0][2])
 
@@ -96,7 +102,7 @@ class Identity(Matrix):
         Matrix.__init__(self, rows = DIMENSIONS + 1,
                         cols = DIMENSIONS + 1)
         for i in range(DIMENSIONS + 1):
-            self.matrix[i][i] = 1
+            self[i][i] = 1
 
 
 class Rotation(Matrix):
@@ -104,15 +110,15 @@ class Rotation(Matrix):
     axis by a specified angle (given in radians or degrees).
     """
 
-    def __init__(self, axis, radians = None, degrees = None):
+    def __init__(self, axis, radians = None, degrees = DEGREES):
         Matrix.__init__(self, rows = DIMENSIONS + 1,
                         cols = DIMENSIONS + 1)
         for i in range(DIMENSIONS + 1):
-            self.matrix[i][i] = 1
-        if degrees is not None:
-            self.angle = math.radians(degrees)
-        elif radians is not None:
+            self[i][i] = 1
+        if radians is not None:
             self.angle = radians
+        else:
+            self.angle = math.radians(degrees)
         if axis == 'x':
             self.set_rotation_around_x()
         elif axis == 'y':
@@ -123,26 +129,26 @@ class Rotation(Matrix):
     def set_rotation_around_x(self):
         sin = math.sin(self.angle)
         cos = math.cos(self.angle)
-        self.matrix[1][1] = cos
-        self.matrix[1][2] = -sin
-        self.matrix[2][1] = sin
-        self.matrix[2][2] = cos
+        self[1][1] = cos
+        self[1][2] = -sin
+        self[2][1] = sin
+        self[2][2] = cos
 
     def set_rotation_around_y(self):
         sin = math.sin(self.angle)
         cos = math.cos(self.angle)
-        self.matrix[0][0] = cos
-        self.matrix[0][2] = sin
-        self.matrix[2][0] = -sin
-        self.matrix[2][2] = cos
+        self[0][0] = cos
+        self[0][2] = sin
+        self[2][0] = -sin
+        self[2][2] = cos
 
     def set_rotation_around_z(self):
         sin = math.sin(self.angle)
         cos = math.cos(self.angle)
-        self.matrix[0][0] = cos
-        self.matrix[0][1] = sin
-        self.matrix[1][0] = -sin
-        self.matrix[1][1] = cos
+        self[0][0] = cos
+        self[0][1] = sin
+        self[1][0] = -sin
+        self[1][1] = cos
 
 
 class Translation(Matrix):
@@ -153,9 +159,9 @@ class Translation(Matrix):
                         cols = DIMENSIONS + 1)
         for i in range(DIMENSIONS + 1):
             self.matrix[i][i] = 1
-        self.matrix[dimension][0] = vector.get_x()
-        self.matrix[dimension][1] = vector.get_y()
-        self.matrix[dimension][2] = vector.get_z()
+        self[dimension][0] = vector.get_x()
+        self[dimension][1] = vector.get_y()
+        self[dimension][2] = vector.get_z()
 
 
 class Scaling(Matrix):
@@ -164,9 +170,9 @@ class Scaling(Matrix):
     def __init__(self, scale):
         Matrix.__init__(self, rows = DIMENSIONS + 1,
                         cols = DIMENSIONS + 1)
-        self.matrix[0][0] = scale.get_x()
-        self.matrix[1][1] = scale.get_y()
-        self.matrix[2][2] = scale.get_z()
+        self[0][0] = scale.get_x()
+        self[1][1] = scale.get_y()
+        self[2][2] = scale.get_z()
 
 
 class ViewportTransformation(Matrix):
