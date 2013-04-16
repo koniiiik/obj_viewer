@@ -16,3 +16,9 @@ can be done on your own), I'm reinventing the wheel by only using the most
 basic functions like drawing a single line -- which, compared to using
 already implemented, highly optimized functions, slows the application
 down a lot.
+
+
+The application has been tested on Python 2.7 and Python 3.3 and should
+be compatible with both. In order to get it running, you'll need to
+download and install PySide available at
+http://qt-project.org/wiki/Category:LanguageBindings::PySide::Downloads
