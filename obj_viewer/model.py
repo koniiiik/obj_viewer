@@ -1,8 +1,7 @@
 import itertools
 
-from obj_viewer.constants import DEGREES, TRANSLATE, SCALE_UP, SCALE_DOWN
 from obj_viewer.errors import WrongFileFormatError
-from obj_viewer.matrices import Matrix, Point, Identity, Rotation
+from obj_viewer.matrices import Matrix, ViewportTransformation, Point, Identity, Rotation
 from obj_viewer.face import Face
 
 
@@ -25,9 +24,9 @@ class Model():
                    displayed; initialized to identity at the beginning
     """
 
-    def __init__(self, canvas, view_matrix, filename):
+    def __init__(self, canvas, filename):
         self.canvas = canvas
-        self.view_matrix = view_matrix
+        self.view_matrix = ViewportTransformation()
         self.vertices = []
         self.faces = []
         self.current_mod = Identity()
@@ -79,21 +78,6 @@ class Model():
 
         print('A total of %d vertices and %d faces has been loaded.'
               % (len(self.vertices), len(self.faces)))
-
-
-    # All transformation methods follow -- they'd be unnecessary if
-    # Qt signal slots were able to use functions with extra
-    # arguments...
-    # TODO: Look into this...
-
-    def rotate_x(self):
-        self.transform(Rotation('x', degrees = DEGREES))
-
-    def rotate_y(self):
-        self.transform(Rotation('y', degrees = DEGREES))
-
-    def rotate_z(self):
-        self.transform(Rotation('z', degrees = DEGREES))
 
     def transform(self, transformation):
         self.current_mod = self.current_mod.multiplied(transformation)

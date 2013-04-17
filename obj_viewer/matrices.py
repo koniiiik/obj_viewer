@@ -154,14 +154,17 @@ class Rotation(Matrix):
 class Translation(Matrix):
     """Class responsible for translation matrices."""
 
-    def __init__(self, vector):
+    def __init__(self, direction, distance):
         Matrix.__init__(self, rows = DIMENSIONS + 1,
                         cols = DIMENSIONS + 1)
         for i in range(DIMENSIONS + 1):
-            self.matrix[i][i] = 1
-        self[dimension][0] = vector.get_x()
-        self[dimension][1] = vector.get_y()
-        self[dimension][2] = vector.get_z()
+            self[i][i] = 1
+        if direction == 'x':
+            self[DIMENSIONS][0] = distance
+        elif direction == 'y':
+            self[DIMENSIONS][1] = distance
+        elif direction == 'z':
+            self[DIMENSIONS][2] = distance
 
 
 class Scaling(Matrix):
@@ -170,9 +173,9 @@ class Scaling(Matrix):
     def __init__(self, scale):
         Matrix.__init__(self, rows = DIMENSIONS + 1,
                         cols = DIMENSIONS + 1)
-        self[0][0] = scale.get_x()
-        self[1][1] = scale.get_y()
-        self[2][2] = scale.get_z()
+        self[0][0] = scale
+        self[1][1] = scale
+        self[2][2] = scale
 
 
 class ViewportTransformation(Matrix):
@@ -182,8 +185,8 @@ class ViewportTransformation(Matrix):
     """
 
     def __init__(self):
-        this = [[VIEW_SCALE,     0,               0, 0],
-                [0,              -VIEW_SCALE,     0, 0],
-                [0,              0,               1, 0],
-                [VIEW_WIDTH / 2, VIEW_HEIGHT / 2, 0, 1]]
+        this = [[VIEW_SCALE,      0,                0, 0],
+                [0,               -VIEW_SCALE,      0, 0],
+                [0,               0,                1, 0],
+                [VIEW_WIDTH // 2, VIEW_HEIGHT // 2, 0, 1]]
         Matrix.__init__(self, this)
