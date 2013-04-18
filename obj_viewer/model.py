@@ -58,7 +58,7 @@ class Model():
                                                  coordinate in
                                                  line[2:].rstrip('\n').split()]))
                 except TypeError:
-                    raise WrongFileFormatError('Invalid input file: '
+                    raise WrongFileFormatError('Invalid input file - '
                                                'unexpected file '
                                                'format.')
             # Load the faces:
@@ -68,11 +68,11 @@ class Model():
                                             vertex in
                                             line[2:].rstrip('\n').split()]))
                 except IndexError:
-                    raise WrongFileFormatError('Invalid input file: '
+                    raise WrongFileFormatError('Invalid input file - '
                                                'face defined before '
                                                'all of its vertices.')
                 except TypeError:
-                    raise WrongFileFormatError('Invalid input file: '
+                    raise WrongFileFormatError('Invalid input file - '
                                                'unexpected file '
                                                'format.')
 

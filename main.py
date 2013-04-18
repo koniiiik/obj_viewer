@@ -55,9 +55,13 @@ class Layout(QtGui.QMainWindow):
                 self.model = Model(self.scene, filename)
             except (IOError, WrongFileFormatError) as e:
                 self.model = None
+                err = QtGui.QErrorMessage(self)
+                err.setWindowTitle('Oops!')
+                err.showMessage(str(e))
                 sys.stderr.write(str(e) + EOL)
             if self.model is not None:
                 # TODO: look into the scene's autocentering
+                # and/or autoresizing
                 self.model.render()
                 self.update_matrix()
         self.update_transform_controls()
