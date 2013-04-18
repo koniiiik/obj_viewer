@@ -4,7 +4,7 @@ from PySide import QtGui
 from PySide import QtCore
 
 from obj_viewer.lib.pyside_dynamic import loadUi
-from obj_viewer.constants import APP_NAME, EOL, DEGREES, TRANSL_DIST
+from obj_viewer.constants import APP_NAME, EOL, DEGREES, DISTANCE, FACTOR_PLUS, FACTOR_MINUS
 from obj_viewer.errors import WrongFileFormatError
 from obj_viewer.matrices import Rotation, Translation, Scaling
 from obj_viewer.model import Model
@@ -28,20 +28,20 @@ class Layout(QtGui.QMainWindow):
         # Main menu
         self.actionOpen.triggered.connect(self.choose_file)
         self.actionQuit.triggered.connect(QtCore.QCoreApplication.instance().quit)
-        self.actionReload.triggered.connect(self.transformation_clicked)
+        self.actionReload.triggered.connect(self.reload_clicked)
         # Left panel (application controls)
         self.loadButton.clicked.connect(self.choose_file)
         self.quitButton.clicked.connect(QtCore.QCoreApplication.instance().quit)
         # Right panel (model transformation)
-        self.reloadButton.clicked.connect(self.transformation_clicked)
-        self.rotateXButton.clicked.connect(self.transformation_clicked)
-        self.rotateYButton.clicked.connect(self.transformation_clicked)
-        self.rotateZButton.clicked.connect(self.transformation_clicked)
-        self.translateXButton.clicked.connect(self.transformation_clicked)
-        self.translateYButton.clicked.connect(self.transformation_clicked)
-        self.translateZButton.clicked.connect(self.transformation_clicked)
-        self.scaleUpButton.clicked.connect(self.transformation_clicked)
-        self.scaleDownButton.clicked.connect(self.transformation_clicked)
+        self.reloadButton.clicked.connect(self.reload_clicked)
+        self.rotateXButton.clicked.connect(self.transformation_clicked(rotate = {'axis': 'x', 'degrees': DEGREES}))
+        self.rotateYButton.clicked.connect(self.transformation_clicked(rotate = {'axis': 'y', 'degrees': DEGREES}))
+        self.rotateZButton.clicked.connect(self.transformation_clicked(rotate = {'axis': 'z', 'degrees': DEGREES}))
+        self.translateXButton.clicked.connect(self.transformation_clicked(translate = {'axis': 'x', 'dist': DISTANCE}))
+        self.translateYButton.clicked.connect(self.transformation_clicked(translate = {'axis': 'y', 'dist': DISTANCE}))
+        self.translateZButton.clicked.connect(self.transformation_clicked(translate = {'axis': 'z', 'dist': DISTANCE}))
+        self.scaleUpButton.clicked.connect(self.transformation_clicked(scale = {'factor': FACTOR_PLUS}))
+        self.scaleDownButton.clicked.connect(self.transformation_clicked(scale = {'factor': FACTOR_MINUS}))
 
     def set_view(self, filename = None):
         """Paint either a blank scene (if no filename has been
@@ -91,26 +91,29 @@ class Layout(QtGui.QMainWindow):
             self.current_file = dialog.selectedFiles()[0]
             self.set_view(self.current_file)
 
-    def transformation_clicked(self):
-        # TODO: replace this dummy method with something nicer
-        sender = self.sender().objectName()
-        if sender.startswith('reload'):
-            self.model.reset()
-        elif sender.startswith('rotate'):
-            self.model.transform(Rotation(sender[6].lower(), degrees = DEGREES))
-        elif sender.startswith('translate'):
-            self.model.transform(Translation(sender[9].lower(), TRANSL_DIST))
-        elif sender == 'scaleUpButton':
-            self.model.transform(Scaling(1.1))
-        elif sender == 'scaleDownButton':
-            self.model.transform(Scaling(0.9))
-        self.update_matrix()
+    def reload_clicked(self):
+        self.model.reset()
+
+    def transformation_clicked(self, rotate = None,
+                               translate = None, scale = None):
+        if rotate is not None:
+            matrix = Rotation(**rotate)
+        elif translate is not None:
+            matrix = Translation(**translate)
+        elif scale is not None:
+            matrix = Scaling(**scale)
+        def transform():
+            self.model.transform(matrix)
+        return transform
 
     # TODO: this should really be tablewidget's method
     def update_matrix(self):
         for r, row in enumerate(self.model.current_mod):
             for c, col in enumerate(row):
-                self.matrixView.setItem(r, c, QtGui.QTableWidgetItem('%.3f' % col))
+                if int(col) == col:
+                    self.matrixView.setItem(r, c, QtGui.QTableWidgetItem(str(int(col))))
+                else:
+                    self.matrixView.setItem(r, c, QtGui.QTableWidgetItem('%.3f' % col))
 
 def main():
     """Build the whole application."""

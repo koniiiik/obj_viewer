@@ -30,7 +30,7 @@ class Matrix(list):
         return Matrix([[row[i] for row in self] for i
                        in range(self.rows)])
 
-    def multiplied(self, matrix):
+    def __mul__(self, matrix):
         if self.cols != matrix.rows:
             raise IncompatibleMatricesError('Matrix multiplication '
                                             'called on matrices of '
@@ -58,8 +58,7 @@ class Point(Matrix):
         taking into account any transformation that has been applied
         to the model (stored in transformation_matrix).
         """
-        new_coordinates =\
-            self.multiplied(transformation_matrix).multiplied(view_matrix)
+        new_coordinates = self * transformation_matrix * view_matrix
         return (new_coordinates[0][0], new_coordinates[0][1],
                 new_coordinates[0][2])
 
@@ -154,28 +153,28 @@ class Rotation(Matrix):
 class Translation(Matrix):
     """Class responsible for translation matrices."""
 
-    def __init__(self, direction, distance):
+    def __init__(self, axis, dist):
         Matrix.__init__(self, rows = DIMENSIONS + 1,
                         cols = DIMENSIONS + 1)
         for i in range(DIMENSIONS + 1):
             self[i][i] = 1
-        if direction == 'x':
-            self[DIMENSIONS][0] = distance
-        elif direction == 'y':
-            self[DIMENSIONS][1] = distance
-        elif direction == 'z':
-            self[DIMENSIONS][2] = distance
+        if axis == 'x':
+            self[DIMENSIONS][0] = dist
+        elif axis == 'y':
+            self[DIMENSIONS][1] = dist
+        elif axis == 'z':
+            self[DIMENSIONS][2] = dist
 
 
 class Scaling(Matrix):
     """Class handling scaling matrices."""
 
-    def __init__(self, scale):
+    def __init__(self, factor):
         Matrix.__init__(self, rows = DIMENSIONS + 1,
                         cols = DIMENSIONS + 1)
-        self[0][0] = scale
-        self[1][1] = scale
-        self[2][2] = scale
+        self[0][0] = factor
+        self[1][1] = factor
+        self[2][2] = factor
 
 
 class ViewportTransformation(Matrix):

@@ -80,7 +80,7 @@ class Model():
               % (len(self.vertices), len(self.faces)))
 
     def transform(self, transformation):
-        self.current_mod = self.current_mod.multiplied(transformation)
+        self.current_mod *= transformation
         self.render()
 
     def reset(self):
