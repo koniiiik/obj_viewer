@@ -153,7 +153,7 @@ class Rotation(Matrix):
 class Translation(Matrix):
     """Class responsible for translation matrices."""
 
-    def __init__(self, axis, dist):
+    def __init__(self, axis, dist = DISTANCE):
         Matrix.__init__(self, rows = DIMENSIONS + 1,
                         cols = DIMENSIONS + 1)
         for i in range(DIMENSIONS + 1):
