@@ -1,7 +1,8 @@
 import itertools
 
 from obj_viewer.errors import WrongFileFormatError
-from obj_viewer.matrices import Matrix, ViewportTransformation, Point, Identity, Rotation
+from obj_viewer.matrices import (Matrix, OrthogonalProjection, Point,
+                                 Identity, Rotation)
 from obj_viewer.face import Face
 
 
@@ -26,7 +27,7 @@ class Model():
 
     def __init__(self, canvas, filename):
         self.canvas = canvas
-        self.view_matrix = ViewportTransformation()
+        self.view_matrix = OrthogonalProjection()
         self.vertices = []
         self.faces = []
         self.current_mod = Identity()

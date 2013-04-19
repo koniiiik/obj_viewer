@@ -1,7 +1,9 @@
 import math
 
 from obj_viewer.errors import IncompatibleMatricesError
-from obj_viewer.constants import *
+from obj_viewer.constants import (DIMENSIONS, DEGREES, FACTOR_PLUS,
+                                  FACTOR_MINUS, DISTANCE, VIEW_SCALE,
+                                  VIEW_WIDTH, VIEW_HEIGHT)
 
 
 class Matrix(list):
@@ -177,9 +179,10 @@ class Scaling(Matrix):
         self[0][0] = factor
         self[1][1] = factor
         self[2][2] = factor
+        self[3][3] = 1
 
 
-class ViewportTransformation(Matrix):
+class OrthogonalProjection(Matrix):
     """Class handling the creation of a viewport transformation
     matrix, that is, a matrix which scales objects to be visible in
     the viewport and moves the origin to the viewport center.

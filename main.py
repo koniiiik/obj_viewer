@@ -3,8 +3,8 @@ import sys
 from PySide import QtGui
 from PySide import QtCore
 
-from obj_viewer.lib.pyside_dynamic import loadUi
-from obj_viewer.constants import APP_NAME, EOL, DEGREES, DISTANCE, FACTOR_PLUS, FACTOR_MINUS
+from obj_viewer.lib import pyside_dynamic
+from obj_viewer.constants import EOL, FACTOR_PLUS, FACTOR_MINUS
 from obj_viewer.errors import WrongFileFormatError
 from obj_viewer.matrices import Rotation, Translation, Scaling
 from obj_viewer.model import Model
@@ -15,7 +15,7 @@ class Layout(QtGui.QMainWindow):
     def __init__(self, *args, **kwargs):
         # super().__init__(*args, **kwargs)
         super(Layout, self).__init__(*args, **kwargs)
-        loadUi('obj_viewer/gui/layout.ui', self)
+        pyside_dynamic.loadUi('obj_viewer/gui/layout.ui', self)
         # TODO: do we really need to remember the current file?
         self.current_file = None
         self.model = None
@@ -116,13 +116,13 @@ class Layout(QtGui.QMainWindow):
     # TODO: consider subclassing QTableWidget later
     def update_matrix(self):
         for r, row in enumerate(self.model.current_mod):
-            for c, col in enumerate(row):
-                if int(col) == col:
+            for c, num in enumerate(row):
+                if int(num) == num:
                     self.matrixView.setItem(r, c,
-                                            QtGui.QTableWidgetItem(str(int(col))))
+                                            QtGui.QTableWidgetItem(str(int(num))))
                 else:
                     self.matrixView.setItem(r, c,
-                                            QtGui.QTableWidgetItem('%.3f' % col))
+                                            QtGui.QTableWidgetItem('%.3f' % num))
 
 def main():
     """Build the whole application."""
