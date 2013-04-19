@@ -26,14 +26,11 @@ class Matrix(list):
                                  'matrix, nor row and column count '
                                  'present in parameters.')
 
-    def transposed(self):
-        return Matrix([[row[i] for row in self] for i
-                       in range(self.rows)])
-
     def __mul__(self, matrix):
         if self.cols != matrix.rows:
             raise IncompatibleMatricesError('Matrix multiplication '
-                                            'called on matrices of '
+                                            'cannot be performed on '
+                                            'matrices of '
                                             'incompatible '
                                             'dimensions.')
         else:
@@ -41,6 +38,11 @@ class Matrix(list):
             return Matrix([[sum(cell1 * cell2 for cell1, cell2
                             in zip(row, col)) for col
                             in transposed] for row in self])
+
+
+    def transposed(self):
+        return Matrix([[row[i] for row in self] for i
+                       in range(self.rows)])
 
 
 class Point(Matrix):
@@ -119,13 +121,13 @@ class Rotation(Matrix):
         else:
             self.angle = math.radians(degrees)
         if axis == 'x':
-            self.set_rotation_around_x()
+            self.rotating_around_x()
         elif axis == 'y':
-            self.set_rotation_around_y()
+            self.rotating_around_y()
         elif axis == 'z':
-            self.set_rotation_around_z()
+            self.rotating_around_z()
 
-    def set_rotation_around_x(self):
+    def rotating_around_x(self):
         sin = math.sin(self.angle)
         cos = math.cos(self.angle)
         self[1][1] = cos
@@ -133,7 +135,7 @@ class Rotation(Matrix):
         self[2][1] = sin
         self[2][2] = cos
 
-    def set_rotation_around_y(self):
+    def rotating_around_y(self):
         sin = math.sin(self.angle)
         cos = math.cos(self.angle)
         self[0][0] = cos
@@ -141,7 +143,7 @@ class Rotation(Matrix):
         self[2][0] = -sin
         self[2][2] = cos
 
-    def set_rotation_around_z(self):
+    def rotating_around_z(self):
         sin = math.sin(self.angle)
         cos = math.cos(self.angle)
         self[0][0] = cos

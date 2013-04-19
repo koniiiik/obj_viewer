@@ -55,9 +55,10 @@ class Layout(QtGui.QMainWindow):
                 self.model = Model(self.scene, filename)
             except (IOError, WrongFileFormatError) as e:
                 self.model = None
-                err = QtGui.QErrorMessage(self)
+                err = QtGui.QMessageBox(self)
                 err.setWindowTitle('Oops!')
-                err.showMessage(str(e))
+                err.setText(str(e))
+                err.exec()
                 sys.stderr.write(str(e) + EOL)
             if self.model is not None:
                 # TODO: look into the scene's autocentering
@@ -97,6 +98,7 @@ class Layout(QtGui.QMainWindow):
 
     def reload_clicked(self):
         self.model.reset()
+        self.update_matrix()
 
     def transformation_clicked(self, rotate = None,
                                translate = None, scale = None):
@@ -108,16 +110,19 @@ class Layout(QtGui.QMainWindow):
             matrix = Scaling(**scale)
         def transform():
             self.model.transform(matrix)
+            self.update_matrix()
         return transform
 
-    # TODO: this should really be tablewidget's method
+    # TODO: consider subclassing QTableWidget later
     def update_matrix(self):
         for r, row in enumerate(self.model.current_mod):
             for c, col in enumerate(row):
                 if int(col) == col:
-                    self.matrixView.setItem(r, c, QtGui.QTableWidgetItem(str(int(col))))
+                    self.matrixView.setItem(r, c,
+                                            QtGui.QTableWidgetItem(str(int(col))))
                 else:
-                    self.matrixView.setItem(r, c, QtGui.QTableWidgetItem('%.3f' % col))
+                    self.matrixView.setItem(r, c,
+                                            QtGui.QTableWidgetItem('%.3f' % col))
 
 def main():
     """Build the whole application."""

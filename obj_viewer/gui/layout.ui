@@ -34,14 +34,34 @@
         <height>400</height>
        </size>
       </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
       <property name="interactive">
        <bool>false</bool>
+      </property>
+      <property name="sceneRect">
+       <rectf>
+        <x>0.000000000000000</x>
+        <y>0.000000000000000</y>
+        <width>600.000000000000000</width>
+        <height>400.000000000000000</height>
+       </rectf>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
       </property>
       <property name="transformationAnchor">
-       <enum>QGraphicsView::AnchorViewCenter</enum>
+       <enum>QGraphicsView::NoAnchor</enum>
+      </property>
+      <property name="resizeAnchor">
+       <enum>QGraphicsView::NoAnchor</enum>
+      </property>
+      <property name="viewportUpdateMode">
+       <enum>QGraphicsView::MinimalViewportUpdate</enum>
       </property>
      </widget>
     </item>
@@ -127,6 +147,11 @@
               <width>160</width>
               <height>160</height>
              </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+             </font>
             </property>
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
@@ -263,13 +288,6 @@
           <string>Rotate</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <widget class="QCheckBox" name="clockwiseCheck">
-            <property name="text">
-             <string>clockwise</string>
-            </property>
-           </widget>
-          </item>
           <item>
            <widget class="QPushButton" name="rotateXButton">
             <property name="text">
