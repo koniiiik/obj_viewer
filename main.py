@@ -19,29 +19,78 @@ class Layout(QtGui.QMainWindow):
         # TODO: do we really need to remember the current file?
         self.current_file = None
         self.model = None
+        self.assign_icons()
         self.update_transform_controls()
         self.connect_controls()
         self.set_view()
 
     def connect_controls(self):
         """Connect relevant signals to their slots."""
-        # Main menu
-        self.actionOpen.triggered.connect(self.choose_file)
-        self.actionQuit.triggered.connect(QtCore.QCoreApplication.instance().quit)
-        self.actionReload.triggered.connect(self.reload_clicked)
-        # Left panel (application controls)
+        # Generate functions to connect to:
+        rotate_x = self.transformation_clicked(rotate = {'axis': 'x'})
+        rotate_y = self.transformation_clicked(rotate = {'axis': 'y'})
+        rotate_z = self.transformation_clicked(rotate = {'axis': 'z'})
+        transl_x = self.transformation_clicked(translate = {'axis': 'x'})
+        transl_y = self.transformation_clicked(translate = {'axis': 'y'})
+        transl_z = self.transformation_clicked(translate = {'axis': 'z'})
+        scale_up = self.transformation_clicked(scale =
+                                               {'factor': FACTOR_PLUS})
+        scale_down = self.transformation_clicked(scale =
+                                                 {'factor': FACTOR_MINUS})
+        # Main menu:
+        self.openAction.triggered.connect(self.choose_file)
+        self.quitAction.triggered.connect(QtCore.QCoreApplication.instance().quit)
+        self.resetAction.triggered.connect(self.reset_clicked)
+        self.rotateXAction.triggered.connect(rotate_x)
+        self.rotateYAction.triggered.connect(rotate_y)
+        self.rotateZAction.triggered.connect(rotate_z)
+        self.translateXAction.triggered.connect(transl_x)
+        self.translateYAction.triggered.connect(transl_y)
+        self.translateZAction.triggered.connect(transl_z)
+        self.scaleUpAction.triggered.connect(scale_up)
+        self.scaleDownAction.triggered.connect(scale_down)
+        # Left panel (application controls):
         self.loadButton.clicked.connect(self.choose_file)
         self.quitButton.clicked.connect(QtCore.QCoreApplication.instance().quit)
-        # Right panel (model transformation)
-        self.reloadButton.clicked.connect(self.reload_clicked)
-        self.rotateXButton.clicked.connect(self.transformation_clicked(rotate = {'axis': 'x'}))
-        self.rotateYButton.clicked.connect(self.transformation_clicked(rotate = {'axis': 'y'}))
-        self.rotateZButton.clicked.connect(self.transformation_clicked(rotate = {'axis': 'z'}))
-        self.translateXButton.clicked.connect(self.transformation_clicked(translate = {'axis': 'x'}))
-        self.translateYButton.clicked.connect(self.transformation_clicked(translate = {'axis': 'y'}))
-        self.translateZButton.clicked.connect(self.transformation_clicked(translate = {'axis': 'z'}))
-        self.scaleUpButton.clicked.connect(self.transformation_clicked(scale = {'factor': FACTOR_PLUS}))
-        self.scaleDownButton.clicked.connect(self.transformation_clicked(scale = {'factor': FACTOR_MINUS}))
+        # Right panel (model transformation):
+        self.resetButton.clicked.connect(self.reset_clicked)
+        self.rotateXButton.clicked.connect(rotate_x)
+        self.rotateYButton.clicked.connect(rotate_y)
+        self.rotateZButton.clicked.connect(rotate_z)
+        self.translateXButton.clicked.connect(transl_x)
+        self.translateYButton.clicked.connect(transl_y)
+        self.translateZButton.clicked.connect(transl_z)
+        self.scaleUpButton.clicked.connect(scale_up)
+        self.scaleDownButton.clicked.connect(scale_down)
+
+    def assign_icons(self):
+        path = 'obj_viewer/gui/images/'
+        # Main menu:
+        self.openAction.setIcon(QtGui.QIcon(path + 'open.png'))
+        self.quitAction.setIcon(QtGui.QIcon(path + 'quit.png'))
+        self.resetAction.setIcon(QtGui.QIcon(path + 'reset.png'))
+        self.rotateMenu.setIcon(QtGui.QIcon(path + 'rotate_x.png'))
+        self.rotateXAction.setIcon(QtGui.QIcon(path + 'rotate_x.png'))
+        self.rotateYAction.setIcon(QtGui.QIcon(path + 'rotate_y.png'))
+        self.rotateZAction.setIcon(QtGui.QIcon(path + 'rotate_z.png'))
+        self.translateMenu.setIcon(QtGui.QIcon(path + 'translate_x.png'))
+        self.translateXAction.setIcon(QtGui.QIcon(path + 'translate_x.png'))
+        self.translateYAction.setIcon(QtGui.QIcon(path + 'translate_y.png'))
+        self.translateZAction.setIcon(QtGui.QIcon(path + 'translate_z.png'))
+        self.scaleUpAction.setIcon(QtGui.QIcon(path + 'scale_up.png'))
+        self.scaleDownAction.setIcon(QtGui.QIcon(path + 'scale_down.png'))
+        
+        self.loadButton.setIcon(QtGui.QIcon(path + 'open.png'))
+        self.quitButton.setIcon(QtGui.QIcon(path + 'quit.png'))
+        self.resetButton.setIcon(QtGui.QIcon(path + 'reset.png'))
+        self.rotateXButton.setIcon(QtGui.QIcon(path + 'rotate_x.png'))
+        self.rotateYButton.setIcon(QtGui.QIcon(path + 'rotate_y.png'))
+        self.rotateZButton.setIcon(QtGui.QIcon(path + 'rotate_z.png'))
+        self.translateXButton.setIcon(QtGui.QIcon(path + 'translate_x.png'))
+        self.translateYButton.setIcon(QtGui.QIcon(path + 'translate_y.png'))
+        self.translateZButton.setIcon(QtGui.QIcon(path + 'translate_z.png'))
+        self.scaleUpButton.setIcon(QtGui.QIcon(path + 'scale_up.png'))
+        self.scaleDownButton.setIcon(QtGui.QIcon(path + 'scale_down.png'))
 
     def set_view(self, filename = None):
         """Paint either a blank scene (if no filename has been
@@ -75,15 +124,21 @@ class Layout(QtGui.QMainWindow):
         to apply them to.
         """
         if self.model is not None:
-            self.reloadButton.setEnabled(True)
+            self.infoBox.setEnabled(True)
+            self.resetButton.setEnabled(True)
             self.rotationBox.setEnabled(True)
             self.scalingBox.setEnabled(True)
             self.translationBox.setEnabled(True)
+            self.modelMenu.setEnabled(True)
+            self.loadButton.setDefault(False)
         else:
-            self.reloadButton.setEnabled(False)
+            self.infoBox.setEnabled(False)
+            self.resetButton.setEnabled(False)
             self.rotationBox.setEnabled(False)
             self.scalingBox.setEnabled(False)
             self.translationBox.setEnabled(False)
+            self.modelMenu.setEnabled(False)
+            self.loadButton.setDefault(True)
 
     def choose_file(self):
         """Show a dialog that enables the user to choose a file
@@ -96,7 +151,7 @@ class Layout(QtGui.QMainWindow):
             self.current_file = dialog.selectedFiles()[0]
             self.set_view(self.current_file)
 
-    def reload_clicked(self):
+    def reset_clicked(self):
         self.model.reset()
         self.update_matrix()
 
