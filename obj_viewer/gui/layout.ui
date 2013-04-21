@@ -111,9 +111,6 @@
          <property name="text">
           <string>&amp;Reset model</string>
          </property>
-         <property name="shortcut">
-          <string>Ctrl+R</string>
-         </property>
         </widget>
        </item>
        <item>
