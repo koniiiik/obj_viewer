@@ -439,9 +439,6 @@
          <property name="text">
           <string>L&amp;oad a model</string>
          </property>
-         <property name="shortcut">
-          <string>Ctrl+O</string>
-         </property>
          <property name="autoDefault">
           <bool>false</bool>
          </property>
@@ -460,9 +457,6 @@
          </property>
          <property name="text">
           <string>&amp;Quit</string>
-         </property>
-         <property name="shortcut">
-          <string>Ctrl+Q</string>
          </property>
         </widget>
        </item>
@@ -654,10 +648,16 @@
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose an OBJ file to be opened.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="quitAction">
    <property name="text">
     <string>Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
   <action name="resetAction">
@@ -666,6 +666,9 @@
    </property>
    <property name="toolTip">
     <string>Reset the model to its original state.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
   <action name="actionAbout">

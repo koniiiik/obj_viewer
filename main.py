@@ -110,8 +110,6 @@ class Layout(QtGui.QMainWindow):
                 err.exec()
                 sys.stderr.write(str(e) + EOL)
             if self.model is not None:
-                # TODO: look into the scene's autocentering
-                # and/or autoresizing
                 self.model.render()
                 self.update_matrix()
         self.update_transform_controls()
